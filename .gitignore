@@ -1,0 +1,5 @@
+.env
+submission.zip
+test_zip/
+__pycache__/
+*.pyc
