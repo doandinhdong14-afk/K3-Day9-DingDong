@@ -1,0 +1,15 @@
+# Secrets - never commit
+.env
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Submission artifact (built on demand from output/)
+output.zip
+
+# OS noise
+.DS_Store
