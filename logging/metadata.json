@@ -1,9 +1,0 @@
-{
-  "cohort": "K3",
-  "repo_starter": "K3-Day9-Multi-Agent-A2A",
-  "policy_version": "EC_POLICY_V1",
-  "model_name": "gemini-3.5-flash-lite",
-  "parameter_size": "under 10B (Mixture-of-Experts/Lite)",
-  "framework": "google-generativeai SDK",
-  "runtime_seconds": 369.4
-}
