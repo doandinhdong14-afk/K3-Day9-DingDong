@@ -66,7 +66,7 @@ python src/main.py
 ```
 
 - **Kết quả mong đợi:** 50/50 case được xử lý thành công, sinh ra file `submission.zip` chứa đầy đủ 50 JSON kết quả, trace.jsonl và metadata.json.
-- **Kết quả thực tế:** Hệ thống chạy thành công 50/50 cases trong 137.94 giây, file zip được tạo tự động không lỗi.
+- **Kết quả thực tế:** Hệ thống chạy thành công 50/50 cases trong 369.40 giây, file zip được tạo tự động không lỗi.
 - **Artifact/log:** `logging/trace.jsonl` và `logging/metadata.json` trong thư mục dự án.
 
 ## 5. Một quyết định kỹ thuật quan trọng
@@ -77,7 +77,7 @@ python src/main.py
   * **Phương án 2:** Sử dụng mô hình thương mại rút gọn **`gemini-3.5-flash-lite`** thông qua Google Gen AI API Key.
 - **Phương án đã chọn:** Phương án 2 (`gemini-3.5-flash-lite`).
 - **Lý do:** Mô hình dòng "Lite" của Gemini có kích thước rất nhỏ (dưới 4 tỷ tham số), hoàn toàn đáp ứng quy định dưới 10B của BTC. Chạy qua API giúp máy tính cá nhân của các thành viên không bị quá tải RAM hay quá nóng trong quá trình chạy hàng loạt 50 ticket, tốc độ xử lý nhanh vượt trội (~2 giây/case).
-- **Bằng chứng quyết định phù hợp:** Chạy thành công toàn bộ 50 ticket chỉ trong 137.94 giây với chất lượng lý luận tiếng Việt xuất sắc của Agent trong file `trace.jsonl`.
+- **Bằng chứng quyết định phù hợp:** Chạy thành công toàn bộ 50 ticket chỉ trong 369.40 giây với chất lượng lý luận tiếng Việt xuất sắc của Agent trong file `trace.jsonl`.
 
 ## 6. Một lỗi hoặc blocker đã xử lý
 
