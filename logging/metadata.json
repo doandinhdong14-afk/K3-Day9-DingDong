@@ -1,0 +1,17 @@
+{
+  "cohort": "K3",
+  "repo_starter": "K3-Day9-Multi-Agent-A2A",
+  "policy_version": "EC_POLICY_V1",
+  "model_used": "multi-agent-system-v1",
+  "parameter_size": "<=4B",
+  "runtime": "python-3.13.10",
+  "agents": [
+    "CoordinatorAgent",
+    "OrderSellerAgent",
+    "PaymentAgent",
+    "DeliveryAgent",
+    "PolicyAgent",
+    "VerifierAgent"
+  ],
+  "total_cases_processed": 0
+}
