@@ -18,8 +18,8 @@
 
 | Module/deliverable | File/hàm phụ trách | Input nhận vào | Output bàn giao   | Trạng thái                            |
 | ------------------ | ------------------ | -------------- | ----------------- | ------------------------------------- |
-| [Phần việc]        | [File/hàm]         | [Input]        | [Output/artifact] | [Hoàn thành] |
-| [Phần việc]        | [File/hàm]         | [Input]        | [Output/artifact] | [Hoàn thành/Một phần/Chưa hoàn thành] |
+| [Xây dựng agent điều phối vơi LLM]      | [CoordinatorAgent]         | [Phản hồi người dùng]        | [Intent trích ra từ phản hồi] | [Hoàn thành] |
+
 
 Chỉ nhận ownership cho phần bạn trực tiếp thực hiện. Liên hệ rõ phần việc của bạn với đầu vào, đầu ra và các thành viên phụ thuộc vào phần đó.
 
@@ -34,7 +34,7 @@ Chỉ nhận ownership cho phần bạn trực tiếp thực hiện. Liên hệ 
 | Nhiệm vụ đã thực hiện | File/hàm/artifact liên quan | Kết quả bàn giao          | Cách xác minh   |
 | --------------------- | --------------------------- | ------------------------- | --------------- |
 | [Mô tả cụ thể]        | [Đường dẫn file]            | [Artifact/metrics/report] | [Lệnh/artifact] |
-| [Mô tả cụ thể]        | [Đường dẫn file]            | [Artifact/metrics/report] | [Lệnh/artifact] |
+
 
 Nêu một output cụ thể mà phần việc của bạn tạo ra hoặc giúp xác minh:
 
@@ -44,21 +44,21 @@ Nêu một output cụ thể mà phần việc của bạn tạo ra hoặc giúp
 
 ### Vấn đề cần giải quyết
 
-[Phần của bạn giải quyết vấn đề gì trong pipeline?]
+[Xác định ngữ cảnh, yêu cầu qua phản hồi]
 
 ### Cách triển khai
 
-[Mô tả thuật toán, quy tắc dữ liệu, orchestration hoặc quyết định chính. Không chỉ chép lại tên hàm.]
+[gọi api để trong việc xác định các thông tin trên qua định dạng json]
 
 ### Input, output và contract
 
 | Thành phần              | Mô tả                                  |
 | ----------------------- | -------------------------------------- |
-| Input                   | [Schema, artifact hoặc tham số]        |
-| Output                  | [Schema, artifact hoặc giá trị trả về] |
+| Input                   | [json từ file]        |
+| Output                  | [cảm xúc, yêu cầu khách hàng] |
 | Module phụ thuộc        | [Module/file liên quan]                |
-| Module sử dụng output   | [Module/file liên quan]                |
-| Điều kiện lỗi cần xử lý | [Trường hợp thực tế]                   |
+| Module sử dụng output   | [OrderSellerAgent]                |
+
 
 ### Cách xác minh
 
@@ -97,16 +97,20 @@ Nếu chưa xử lý xong:
 
 Giải thích ngắn gọn bằng lời của bạn:
 
-1. Dữ liệu đi từ Crossref đến vector index như thế nào?
+1. Dữ liệu đi từ Crossref đến vector index như thế nào? 
 2. Evaluation set và ground-truth document IDs dùng để đo retrieval/answer quality ra sao?
-3. Quality checks khác freshness monitoring ở điểm nào trong bài lab?
-4. Vì sao phải dùng cùng test set cho baseline, corrupted và repaired?
-5. Repair được xem là thành công dựa trên artifact và metric nào?
+3. Quality checks khác freshness monitoring ở điểm nào trong bài lab? 
+4. Vì sao phải dùng cùng test set cho baseline, corrupted và repaired? 
+5. Repair được xem là thành công dựa trên artifact và metric nào? 
 
 **Câu trả lời:**
 
 [Viết câu trả lời tại đây.]
-
+1. Crossref cung cấp metadata (tiêu đề, tác giả, DOI, abstract, v.v.).
+2.  Evaluation set: tập hợp các câu hỏi hoặc truy vấn chuẩn được chuẩn bị trước. Mỗi truy vấn có ground-truth document IDs
+3.  Freshness monitoring: đảm bảo dữ liệu mới từ Crossref được cập nhật vào index (không bị lỗi pipeline, không bị trễ). Quality checks: tập trung vào độ chính xác của retrieval/answer (ví dụ: có trả về đúng tài liệu không, câu trả lời có khớp ground-truth không).
+4.  Dùng test set giúp thấy rõ sự khác biệt giữa baseline, corrupted và repaired.
+5.  Artifact: vector index sau khi repair (đã rebuild hoặc re-ingest dữ liệu). Metric: chất lượng retrieval/answer đo trên evaluation set (ví dụ: MRR, nDCG, precision@k).
 ## 8. Cam kết của thành viên
 
 Đánh dấu sau khi tự kiểm tra:
@@ -117,5 +121,5 @@ Giải thích ngắn gọn bằng lời của bạn:
 - [ ] Báo cáo không chứa `.env`, API key, token hoặc secret.
 - [ ] Báo cáo này không phải bản sao nguyên văn của báo cáo nhóm hoặc báo cáo thành viên khác.
 
-**Họ và tên:** [Họ và tên]
-**Ngày xác nhận:** [YYYY-MM-DD]
+**Họ và tên:** [Dương Hải Long]
+**Ngày xác nhận:** [2026-8-5]
