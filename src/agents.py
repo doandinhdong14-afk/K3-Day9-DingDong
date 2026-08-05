@@ -251,8 +251,7 @@ class PolicyAgent(BaseAgent):
         for s in order_facts['seller_delays']:
             if s['is_late']:
                 is_seller_late = True
-            if s['seller_id']:
-                seller_id = s['seller_id']
+                seller_id = s['seller_id'] # Gán đúng seller bị trễ bàn giao
                 
         # Apply Policy logic strictly
         primary_issue = ""
@@ -323,22 +322,37 @@ class PolicyAgent(BaseAgent):
             root_cause_code = "DELIVERY_WITHIN_ESTIMATE"
             action = "reject_late_refund"
 
-        # Build evidence list
+        # Build evidence list and affected entities based on primary issue (Optimized to prevent False Positives!)
         evidence_ids = []
-        if items_count > 0:
-            evidence_ids.append(f"order:{order_id}")
-            for idx, item in enumerate(order_ctx.get('items', [])):
-                evidence_ids.append(f"item:{order_id}:{item.get('order_item_id', idx+1)}")
-                if item.get('seller_id') and f"seller:{item.get('seller_id')}" not in evidence_ids:
-                    evidence_ids.append(f"seller:{item.get('seller_id')}")
-        else:
-            evidence_ids.append(f"order:{order_id}")
-            
+        item_ids = []
+        seller_ids = []
+        payment_ids = [f"{order_id}:{p.get('payment_sequential', 1)}" for p in order_ctx.get('payments', [])][:5]
+        
+        evidence_ids.append(f"order:{order_id}")
         for p in order_ctx.get('payments', []):
             evidence_ids.append(f"payment:{order_id}:{p.get('payment_sequential', 1)}")
-            
+
+        if primary_issue == "late_delivery_seller":
+            # For seller delays, only include late items and late sellers
+            for s in order_facts.get('seller_delays', []):
+                if s['is_late']:
+                    item_id_str = s['item_id']
+                    item_ids.append(item_id_str)
+                    evidence_ids.append(f"item:{item_id_str}")
+                    
+                    if s['seller_id'] and s['seller_id'] not in seller_ids:
+                        seller_ids.append(s['seller_id'])
+                        evidence_ids.append(f"seller:{s['seller_id']}")
+        
+        # Add policy code
         evidence_ids.append(f"policy:{root_cause_code}")
-        evidence_ids = evidence_ids[:10]
+        
+        # Deduplicate and limit size strictly
+        unique_evidences = []
+        for ev in evidence_ids:
+            if ev not in unique_evidences:
+                unique_evidences.append(ev)
+        evidence_ids = unique_evidences[:10]
 
         decision = {
             "case_id": "",
@@ -349,9 +363,9 @@ class PolicyAgent(BaseAgent):
             },
             "affected_entities": {
                 "order_ids": [order_id],
-                "item_ids": [f"{order_id}:{item.get('order_item_id', 1)}" for item in order_ctx.get('items', [])][:5] if items_count > 0 else [],
-                "seller_ids": list(set(item.get('seller_id', '') for item in order_ctx.get('items', []) if item.get('seller_id', '')))[:5] if items_count > 0 else [],
-                "payment_ids": [f"{order_id}:{p.get('payment_sequential', 1)}" for p in order_ctx.get('payments', [])][:5]
+                "item_ids": item_ids[:5],
+                "seller_ids": seller_ids[:5],
+                "payment_ids": payment_ids
             },
             "root_cause_analysis": {
                 "ranked_causes": [

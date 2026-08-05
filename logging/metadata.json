@@ -5,5 +5,5 @@
   "model_name": "gemini-3.5-flash-lite",
   "parameter_size": "under 10B (Mixture-of-Experts/Lite)",
   "framework": "google-generativeai SDK",
-  "runtime_seconds": 310.61
+  "runtime_seconds": 538.57
 }
