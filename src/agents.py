@@ -333,7 +333,7 @@ class PolicyAgent(BaseAgent):
             evidence_ids.append(f"payment:{order_id}:{p.get('payment_sequential', 1)}")
 
         if primary_issue == "late_delivery_seller":
-            # For seller delays, only include late items and late sellers
+            # For seller delays, only include late items and late sellers to avoid False Positives
             for s in order_facts.get('seller_delays', []):
                 if s['is_late']:
                     item_id_str = s['item_id']
@@ -343,6 +343,17 @@ class PolicyAgent(BaseAgent):
                     if s['seller_id'] and s['seller_id'] not in seller_ids:
                         seller_ids.append(s['seller_id'])
                         evidence_ids.append(f"seller:{s['seller_id']}")
+        else:
+            # For other cases, include ALL items and sellers of the order because they are part of the order context
+            if items_count > 0:
+                for idx, item in enumerate(order_ctx.get('items', [])):
+                    item_id_str = f"{order_id}:{item.get('order_item_id', idx+1)}"
+                    item_ids.append(item_id_str)
+                    evidence_ids.append(f"item:{item_id_str}")
+                    
+                    if item.get('seller_id') and item.get('seller_id') not in seller_ids:
+                        seller_ids.append(item.get('seller_id'))
+                        evidence_ids.append(f"seller:{item.get('seller_id')}")
         
         # Add policy code
         evidence_ids.append(f"policy:{root_cause_code}")
