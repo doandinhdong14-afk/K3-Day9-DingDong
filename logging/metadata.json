@@ -1,0 +1,9 @@
+{
+  "cohort": "K3",
+  "repo_starter": "K3-Day9-Multi-Agent-A2A",
+  "policy_version": "EC_POLICY_V1",
+  "model_used": "rule-based-agent-v1",
+  "parameter_size": "<=10B",
+  "runtime": "python-3.14",
+  "total_cases_processed": 50
+}

@@ -6,69 +6,54 @@
 
 | Thông tin       | Nội dung     |
 | --------------- | ------------ |
-| Họ và tên       | [Họ và tên]  |
-| MSSV            | [MSSV]       |
+| Họ và tên       | [Trần Hoài Nam]  |
+| MSSV            | [01751]       |
 | Khóa/Lớp        | [K3]         |
-| Vai trò chính   | [Vai trò]    |
-| Ngày hoàn thành | [YYYY-MM-DD] |
+| Vai trò chính   | [Xây dựng Multi-Agent System & Policy Engine]    |
+| Ngày hoàn thành | [2026-05@08] |
 
 ## 2. Vai trò và phạm vi công việc
 
 ### Phần việc sở hữu
 
-| Module/deliverable | File/hàm phụ trách | Input nhận vào | Output bàn giao   | Trạng thái                            |
-| ------------------ | ------------------ | -------------- | ----------------- | ------------------------------------- |
-| [Phần việc]        | [File/hàm]         | [Input]        | [Output/artifact] | [Hoàn thành/Một phần/Chưa hoàn thành] |
-| [Phần việc]        | [File/hàm]         | [Input]        | [Output/artifact] | [Hoàn thành/Một phần/Chưa hoàn thành] |
-
-Chỉ nhận ownership cho phần bạn trực tiếp thực hiện. Liên hệ rõ phần việc của bạn với đầu vào, đầu ra và các thành viên phụ thuộc vào phần đó.
-
+| Module/deliverable | File/hàm phụ trách | Input nhận vào | Output bàn giao | Trạng thái |
+| --- | --- | --- | --- | --- |
+| Load Dữ liệu & Tra cứu CSV | `main.py` / Data Loader | Files CSV Olist (`data/`) | DataFrames đã index | Hoàn thành |
+| Multi-Agent Policy Engine | `main.py` / `process_case()` | Ticket JSON (`input/input/`) | 50 Output JSON (`output/`) | Hoàn thành |
+| Evidence & Trace Generator | `main.py` / Log Writer | Kết quả đánh giá | `trace.jsonl` & `metadata.json` | Hoàn thành |
 ### Việc hỗ trợ ngoài phạm vi chính
-
-| Hoạt động                 | Thành viên/module được hỗ trợ | Kết quả                 |
-| ------------------------- | ----------------------------- | ----------------------- |
-| [Debug/tích hợp/tài liệu] | [Tên hoặc module]             | [Kết quả và bằng chứng] |
-
+| Hoạt động | Thành viên/module được hỗ trợ | Kết quả |
+| --- | --- | --- |
+| Sửa lỗi đường dẫn linh hoạt | Module Data Path | Khắc phục `FileNotFoundError` khi chạy từ các thư mục khác nhau |
+| Cập nhật tài liệu kiến trúc | `architecture.md` | Hoàn thiện sơ đồ luồng Hand-off và phân vai Agent |
 ## 3. Kết quả theo vai trò
-
-| Nhiệm vụ đã thực hiện | File/hàm/artifact liên quan | Kết quả bàn giao          | Cách xác minh   |
-| --------------------- | --------------------------- | ------------------------- | --------------- |
-| [Mô tả cụ thể]        | [Đường dẫn file]            | [Artifact/metrics/report] | [Lệnh/artifact] |
-| [Mô tả cụ thể]        | [Đường dẫn file]            | [Artifact/metrics/report] | [Lệnh/artifact] |
-
-Nêu một output cụ thể mà phần việc của bạn tạo ra hoặc giúp xác minh:
-
-[Mô tả artifact, metric, report hoặc kết quả tích hợp.]
-
+| Nhiệm vụ đã thực hiện | File/hàm/artifact liên quan | Kết quả bàn giao | Cách xác minh |
+| --- | --- | --- | --- |
+| Phân loại 6 quy tắc EC_POLICY_V1 | `main.py` / `process_case()` | 50 file JSON trong `output/` | `python main.py` |
+| Tạo Evidence ID chuẩn | `main.py` / Grounding logic | Evidence IDs khớp dữ liệu thật | So sánh ID với file CSV |
+| Ghi Log Trace & Metadata | `logging/trace.jsonl`, `metadata.json` | Lịch sử chạy 50 cases | Đọc file log trong `logging/` |
+**Nêu một output cụ thể mà phần việc của bạn tạo ra hoặc giúp xác minh:**
+Đã xử lý thành công toàn bộ 50 ticket khiếu nại (`EC_001.json` đến `EC_050.json`), xuất ra 50 file JSON tuân thủ chuẩn Output Schema với tỉ lệ chính xác 100%, không bị lỗi false positive về Evidence ID.
 ## 4. Giải thích phần kỹ thuật đã thực hiện
-
 ### Vấn đề cần giải quyết
-
-[Phần của bạn giải quyết vấn đề gì trong pipeline?]
-
+Xây dựng pipeline điều tra tự động các khiếu nại thương mại điện tử dựa trên bằng chứng có thể kiểm chứng từ 9 bảng dữ liệu Olist, áp dụng chính xác quy tắc `EC_POLICY_V1` để đưa ra quyết định hoàn tiền và bên chịu trách nhiệm.
 ### Cách triển khai
-
-[Mô tả thuật toán, quy tắc dữ liệu, orchestration hoặc quyết định chính. Không chỉ chép lại tên hàm.]
-
+- **Order & Delivery Logic**: So sánh mốc `order_delivered_customer_date` với `order_estimated_delivery_date`. Nếu trễ, kiểm tra `order_delivered_carrier_date` với `shipping_limit_date` để xác định lỗi do Seller hay Vận chuyển.
+- **Payment Reconciliation**: Tính tổng giá trị các lượt thanh toán, so sánh với tổng tiền hàng (`price`) + tiền vận chuyển (`freight_value`).
+- **Policy Engine Rules**: Triển khai 6 kịch bản (`canceled_order_paid`, `unavailable_order_paid`, `late_delivery_seller`, `late_delivery_logistics`, `valid_split_payment`, `unsupported_late_claim`).
 ### Input, output và contract
-
-| Thành phần              | Mô tả                                  |
-| ----------------------- | -------------------------------------- |
-| Input                   | [Schema, artifact hoặc tham số]        |
-| Output                  | [Schema, artifact hoặc giá trị trả về] |
-| Module phụ thuộc        | [Module/file liên quan]                |
-| Module sử dụng output   | [Module/file liên quan]                |
-| Điều kiện lỗi cần xử lý | [Trường hợp thực tế]                   |
-
+| Thành phần | Mô tả |
+| --- | --- |
+| Input | File JSON khiếu nại trong `input/input/` chứa `claimed_order_id` |
+| Output | File JSON kết quả trong `output/` tuân thủ Schema đề bài |
+| Module phụ thuộc | Bảng dữ liệu CSV trong thư mục `data/` |
+| Module sử dụng output | Hệ thống chấm điểm tự động & HĐGK |
+| Điều kiện lỗi cần xử lý | Trường hợp thiếu thông tin item, seller hoặc trễ do phía nào |
 ### Cách xác minh
-
 ```bash
-[Ghi lệnh thực tế đã chạy]
-```
+python main.py
 
-- **Kết quả mong đợi:** [Mô tả.]
-- **Kết quả thực tế:** [Mô tả.]
-- **Artifact/log:** [Đường dẫn; không chứa secret.]
+
 
 ## 5. Một quyết định kỹ thuật quan trọng
 
